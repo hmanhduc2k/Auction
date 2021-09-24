@@ -9,7 +9,7 @@ from django import forms
 
 from .models import AuctionListing, User, Bidding, Comments, Watchlist, Category
 
-
+# Main page to view all active auction listing
 def index(request):
     active_listings = []
     all_listings = AuctionListing.objects.all()
@@ -23,6 +23,7 @@ def index(request):
         "is_index": True
     })
 
+# View all inactive and closed auction listings
 def oldListing(request):
     closed_listing = []
     all_listings = AuctionListing.objects.all()
@@ -35,7 +36,7 @@ def oldListing(request):
         "is_watchlist_remove": True
     })
 
-
+# Login to BID IT!
 def login_view(request):
     if request.method == "POST":
         # Attempt to sign user in
@@ -54,12 +55,12 @@ def login_view(request):
     else:
         return render(request, "auctions/login.html")
 
-
+# Logout of BID IT
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
 
-
+# Register for an account of BID IT
 def register(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -86,6 +87,7 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
+# Model form class for an Auction Listing
 class ListingForm(forms.ModelForm):
     class Meta:
         model = AuctionListing
@@ -105,6 +107,8 @@ class ListingForm(forms.ModelForm):
             'category': 'Select a Category'
         }
 
+# Create a new listing page
+@login_required(login_url='login')
 def createListing(request):
     if request.method == 'POST':
         form = ListingForm(request.POST)
@@ -118,6 +122,8 @@ def createListing(request):
             'form': ListingForm()
         })
 
+# View user watch list
+@login_required(login_url='login')
 def watchList(request):
     all_match = []
     watchList = Watchlist.objects.filter(user=request.user)
@@ -130,6 +136,7 @@ def watchList(request):
         "is_watchlist_remove": False
     })
 
+# Add an auction to user personal watch list
 @login_required(login_url='login')
 def addWatchlist(request, id):
     user = request.user
@@ -140,6 +147,8 @@ def addWatchlist(request, id):
         new_listing.save()
     return HttpResponseRedirect(reverse('watchlist'))
 
+# Remove an auction from the user watch list
+@login_required(login_url='login')
 def removeWatchlist(request, id):
     user = request.user
     listing = AuctionListing.objects.get(id=id)
@@ -148,6 +157,8 @@ def removeWatchlist(request, id):
     watchList = Watchlist.objects.filter(user=user)
     return HttpResponseRedirect(reverse('watchlist'))
 
+# Make a bidding of an auction listing
+@login_required(login_url='login')
 def makeBidding(request, id):
     try:
         listing = AuctionListing.objects.get(id=id)
@@ -164,6 +175,7 @@ def makeBidding(request, id):
         old_bid.delete()
     return HttpResponseRedirect(reverse('auctiondetails', args=id))
 
+# View all details about the auction listing - include the lastest bid price and the comments
 @login_required(login_url='login')
 def auctionDetails(request, id):
     if not request.user.is_authenticated:
@@ -184,6 +196,8 @@ def auctionDetails(request, id):
         "min_bid": listing.currentBid + 1
     })
 
+# Close the auction listing
+@login_required(login_url='login')
 def closeListing(request, id):
     listing = AuctionListing.objects.get(id=id)
     listing.isClosed = True
@@ -197,6 +211,8 @@ def closeListing(request, id):
         "bidder": latestBid
     })
 
+# Make a comment about the auction listing
+@login_required(login_url='login')
 def comment(request, id):
     if request.method == "POST":
         comments = request.POST['content']
@@ -205,6 +221,7 @@ def comment(request, id):
         newComment.save()
     return HttpResponseRedirect(reverse('auctiondetails', args=id))
 
+# View all category available of BID IT
 @login_required(login_url='login')
 def category(request):
     return render(request, "auctions/category.html", {
@@ -212,6 +229,7 @@ def category(request):
         "categories": Category.objects.all()
     })
 
+# View all auction listings related to a category
 @login_required(login_url='login')
 def categoryName(request, name):
     category = Category.objects.filter(categoryName=name).first()

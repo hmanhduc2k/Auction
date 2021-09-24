@@ -29,7 +29,7 @@
                     <p class="card-text text-left" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"> 
                         Description: {{ listing.auctionDetails }} 
                     </p>
-                    <a href="{% url 'auctiondetails' listing.id %}" class="btn btn-primary">More information!</a>
+                    <a href="{% url 'auctiondetails' listing.id %}" class="btn btn-primary">More information</a>
                     {% if is_watchlist_remove %}
                         <a href="{% url 'add_watchlist' listing.id %}" class="btn btn-success">Add to Watchlist?</a>
                     {% else %}

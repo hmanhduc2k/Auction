@@ -11,7 +11,7 @@
             </div>
             {% if user == bidder.user %}
                 <div class="alert alert-primary" role="alert">
-                    You, <strong>{{ user }}</strong>, have won the auction!
+                    You, <strong>{{ user }}</strong>, have won this auction!
                 </div>  
             {% endif %}
         {% else %}
@@ -31,7 +31,7 @@
         <div class="col-6" style="border:1px solid black">
             <h5 class="text-left">Category: {{listing.category}}</h5>
             </br>
-            <h5 class="text-left">Related description of {{listing.auctionTitle}}:</h5>
+            <h5 class="text-left">Description of {{listing.auctionTitle}}:</h5>
             <p class="text-left"> {{ listing.auctionDetails }} </p>
         </div>    
     </div>
@@ -47,7 +47,7 @@
     <div class="container">
         {% if user == listing.user %}
             {% if bidder %}
-                <h4> The current bidding is: {{ listing.currentBid }}$, from {{bidder.user}}</h4>
+                <h4> The current bidding is: {{ listing.currentBid }}$, by {{bidder.user}}</h4>
             {% else %}
                 <h4> The starting bid is: {{ listing.currentBid }}$, with no bidder yet.</h4>
             {% endif %}
