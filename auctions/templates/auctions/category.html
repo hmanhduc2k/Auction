@@ -1,0 +1,26 @@
+{% extends "auctions/layout.html" %}
+{% load static }%
+
+{% block body %}
+    <div class="container">
+        <h2> {{ title }} </h2>
+        </br>
+        <div class="row">
+            <div class="col"/>
+            <div class="col-12 card-columns text-center">
+                {% for type in categories %}
+                    <div class="card bg-light" 
+                    style="height: 100px;">
+                        <div class="card-body text-center">
+                            <a href="{% url 'category_name' type.categoryName %}" class="stretched-link" 
+                                style="font-size: 20px;">
+                                {{ type.categoryName }}
+                            <a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="col"/>
+        <div>
+    </div>
+{% endblock %}

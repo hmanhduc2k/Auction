@@ -1,0 +1,43 @@
+{% extends "auctions/layout.html" %}
+{% load static }%
+
+{% block body %}
+    <div class="row">
+        <div class="col-sm-8">
+            <h2 class="text-left">{{ title }}</h2>
+        </div>
+        <div class="col-sm-4 text-right">
+            {% if is_index %}
+                <a href="{% url 'oldlisting' %}">View closed listings?</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="container_fluid listing_container">
+        <div class="row" style="height: 100px;">
+        {% for listing in listings %}
+            <div class="card col-lg-4 text-center">
+                <div class="card-body">
+                    <div>
+                        <img src = "{{ listing.image }}" 
+                        style="height: 250px;" class="img-fluid card-img-top">
+                    </div>
+                    <h6 class="card-title text-right">Hosted by {{ listing.user }}</h6>
+                    </br>
+                    <h2> {{ listing.auctionTitle }} </h2>
+                    </br>
+                    <p class="card-text text-left">Current bid: {{listing.currentBid}}$</p>
+                    <p class="card-text text-left" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"> 
+                        Description: {{ listing.auctionDetails }} 
+                    </p>
+                    <a href="{% url 'auctiondetails' listing.id %}" class="btn btn-primary">More information!</a>
+                    {% if is_watchlist_remove %}
+                        <a href="{% url 'add_watchlist' listing.id %}" class="btn btn-success">Add to Watchlist?</a>
+                    {% else %}
+                        <a href="{% url 'remove_watchlist' listing.id %}" class="btn btn-danger">Remove from Watchlist?</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <div class="container">
+        <h2 class="text-center">{{ listing.auctionTitle }}</h2>
+        <p class="text-right">Posted by <strong>{{ listing.user }}</strong> on {{ listing.listingDate }}</p>
+        <p class="text-right">You are viewing this auction listing as <strong>{{ user }}</strong> </p>
+        {% if listing.isClosed %}
+            <div class="alert alert-danger" role="alert">
+                This listing has been closed!
+            </div>
+            {% if user == bidder.user %}
+                <div class="alert alert-primary" role="alert">
+                    You, <strong>{{ user }}</strong>, have won the auction!
+                </div>  
+            {% endif %}
+        {% else %}
+            <div class="alert alert-success" role="alert">
+                This listing is currently active!
+            </div>
+        {% endif %}
+    <div>
+    </br>
+    </br>
+    <div class="container row text-center">
+        <div class="col-6" style="border:1px solid black">
+            <h5 class="text-left"> Images for {{listing.auctionTitle}}: <h5>
+            <img style="min-height: 300px; min-width: 300px;" 
+            class="img-fluid card-img-top" src=" {{ listing.image }}">
+        </div>
+        <div class="col-6" style="border:1px solid black">
+            <h5 class="text-left">Category: {{listing.category}}</h5>
+            </br>
+            <h5 class="text-left">Related description of {{listing.auctionTitle}}:</h5>
+            <p class="text-left"> {{ listing.auctionDetails }} </p>
+        </div>    
+    </div>
+    </br>
+    </br>
+    {% if not listing.isClosed %}
+        <div class="container">
+            <a href="{% url 'add_watchlist' listing.id %}" class="text-left btn btn-success">Add to Watchlist?</a>
+        </div>
+    {% endif %}
+    </br>
+    </br>
+    <div class="container">
+        {% if user == listing.user %}
+            {% if bidder %}
+                <h4> The current bidding is: {{ listing.currentBid }}$, from {{bidder.user}}</h4>
+            {% else %}
+                <h4> The starting bid is: {{ listing.currentBid }}$, with no bidder yet.</h4>
+            {% endif %}
+            {% if not listing.isClosed %}
+                <a href="{% url 'close' listing.id %}" class="text-left btn btn-danger">Close this listing?</a>
+                <p>Note that once closed, you may not be able to reopen!</p>
+            {% else %}
+                <p> You have already closed this listing </p>
+            {% endif %}
+        {% elif not listing.isClosed %}
+            <h4> The current bid price is: {{ listing.currentBid }}$. Please ensure that your bid is higher than this value!</h4>
+            {% if user == bidder.user %}
+                <p>You, <strong>{{user}}</strong>, are the most recent bidder of this listing.</p>
+            {% endif %}
+            </br>
+            <form class="row" action="{% url 'bidding' listing.id %}" method=POST>
+                {% csrf_token %}
+                <div class="col-4">
+                    <h4>Place your bidding in SGD:</h4>
+                </div>
+                <div class="col-4">
+                    <input type="number" name="currentBid" placeholder="Enter your bid" min="{{ min_bid }}">
+                </div>
+                <div class="col-4">
+                    <input type="button" class="btn btn-warning" value="Bid it">
+                </div>
+            </form>
+        {% endif %}
+    </div>
+    </br>
+    </br>
+    <div class="container">
+        <h3> Comment Section: </h3>
+        <form action="{% url 'comment' listing.id %}" method="POST">
+            {% csrf_token %}
+            <label for="commentForm">Add a comment:</label>
+            <textarea class="form-control" name="content" id="commentForm" rows="4"></textarea>
+            </br>
+            <input class="btn btn-secondary" type="submit" value="Comment">
+        </form>
+        </br>
+        {% for comment in commentList %}
+            <div class="listing_container" style="border:1px solid black">
+                <p style="padding: 5px;">{{ comment.user }} at {{ comment.commentDate }} </p>
+                <span style="padding: 5px;"> {{ comment.comments }}</span>
+            </div>
+            </br>
+        {% endfor %}
+    </div>
+{% endblock %}
